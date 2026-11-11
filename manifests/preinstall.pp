@@ -9,15 +9,24 @@ class redis::preinstall {
     } elsif $facts['os']['family'] == 'Debian' and $redis::redis_apt_repo {
       include 'apt'
 
+      if $redis::apt_key_source {
+        $apt_key = {
+          name   => 'redis.asc',
+          source => $redis::apt_key_source,
+        }
+      } else {
+        $apt_key = {
+          id          => $redis::apt_key_id,
+          server      => $redis::apt_key_server,
+          key_options => $redis::apt_key_options,
+        }
+      }
+
       apt::source { 'redis':
         location => $redis::apt_location,
         release  => $redis::apt_release,
         repos    => $redis::apt_repos,
-        key      => {
-          id          => $redis::apt_key_id,
-          server      => $redis::apt_key_server,
-          key_options => $redis::apt_key_options,
-        },
+        key      => $apt_key,
       }
     }
   }

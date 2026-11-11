@@ -1,0 +1,3 @@
+---
+# apt-key is no longer available
+redis::apt_key_source: 'https://packages.redis.io/gpg'

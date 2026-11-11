@@ -494,6 +494,18 @@ describe 'redis' do
             it { is_expected.not_to contain_apt__ppa('ppa:rwky/redis') }
           end
         end
+
+        describe 'with redis_apt_repo' do
+          let(:params) { super().merge(redis_apt_repo: true) }
+
+          if facts['os']['family'] != 'Debian'
+            it { is_expected.not_to contain_apt__source('redis') }
+          elsif facts['os']['release']['major'] == '26.04'
+            it { is_expected.to contain_apt__source('redis').with_key('name' => 'redis.asc', 'source' => 'https://packages.redis.io/gpg') }
+          else
+            it { is_expected.to contain_apt__source('redis').with_key('id' => '54318FA4052D1E61A6B6F7BB5F4349D6BF53AA0C', 'server' => 'hkp://keyserver.ubuntu.com/', 'key_options' => nil) }
+          end
+        end
       end
 
       describe 'with parameter unixsocket' do
